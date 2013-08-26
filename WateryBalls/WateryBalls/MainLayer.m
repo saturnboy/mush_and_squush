@@ -106,12 +106,12 @@
 }
 
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    //every touch adds a ball
+    //every multitouch adds a ball per touch
     for (UITouch *touch in touches) {
         //get touch coords
         CGPoint pos = [self convertTouchToNodeSpace:touch];
         
-        //add tiny random jitter
+        //add tiny random jitter to pos
         pos = ccp(pos.x + CCRANDOM_MINUS1_1(), pos.y + CCRANDOM_MINUS1_1());
         
         //random pink ball 1/10th of the time
