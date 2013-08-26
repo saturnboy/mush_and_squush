@@ -19,9 +19,13 @@
 #define M1 (-AMAX / W_A)
 #define M2 (0.2f * AMAX / (W_C-W_B))
 
+#define FRICTION 0.98f
+#define SHAKE_ACCEL 1.9f
+
 #pragma mark - MainLayer
 @implementation MainLayer {
     NSMutableArray *_balls;
+    BOOL _shaking;
 }
 
 +(CCScene *) scene {
@@ -34,7 +38,18 @@
 -(id) init {
 	if ((self = [super init])) {
         self.touchEnabled = YES;
+        self.accelerometerEnabled = YES;
+        
+        _shaking = NO;
         _balls = [@[] mutableCopy];
+        
+        // load spritesheet
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"balls.plist"];
+        
+        // load texture into batch node to optimize rendering
+        CCSpriteBatchNode *batchNode = [CCSpriteBatchNode batchNodeWithFile:@"balls.png" capacity:50];
+        [self addChild:batchNode];
+            
         [self scheduleUpdate];
 	}
 	return self;
@@ -86,24 +101,49 @@
                     (b.vel.y > VMAX ? VMAX : (b.vel.y < -VMAX) ? -VMAX : b.vel.y));
         
         //friction
-        b.vel = ccpMult(b.vel, 0.98);
+        b.vel = ccpMult(b.vel, FRICTION);
     }
 }
 
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    //get touch coords
-    CGPoint pos = [self convertTouchToNodeSpace:touches.anyObject];
-    
-    //add tiny random jitter
-    pos = ccp(pos.x + CCRANDOM_MINUS1_1(), pos.y + CCRANDOM_MINUS1_1());
-    
-    //make a new ball for every touch
-    Ball *ball = [Ball spriteWithFile:@"ball.png"];
-    ball.position = pos;
-    ball.vel = ccp(0, 0);
-    ball.acc = ccp(0, 0);
-    _balls[_balls.count] = ball;
-    [self addChild:ball z:1];
+    //every touch adds a ball
+    for (UITouch *touch in touches) {
+        //get touch coords
+        CGPoint pos = [self convertTouchToNodeSpace:touch];
+        
+        //add tiny random jitter
+        pos = ccp(pos.x + CCRANDOM_MINUS1_1(), pos.y + CCRANDOM_MINUS1_1());
+        
+        //random pink ball 1/10th of the time
+        NSString *name = (CCRANDOM_0_1() < 0.1 ? @"ball-pink.png" : @"ball.png");
+        
+        //make a new ball for every touch
+        Ball *ball = [Ball spriteWithSpriteFrameName:name];
+        ball.position = pos;
+        ball.vel = ccp(0, 0);
+        ball.acc = ccp(0, 0);
+        _balls[_balls.count] = ball;
+        [self addChild:ball z:1];
+    }
+}
+
+-(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
+    if (!_shaking) {
+        if (acceleration.x > SHAKE_ACCEL || acceleration.x < -SHAKE_ACCEL ||
+            acceleration.y > SHAKE_ACCEL || acceleration.y < -SHAKE_ACCEL ||
+            acceleration.z > SHAKE_ACCEL || acceleration.z < -SHAKE_ACCEL) {
+            _shaking = YES;
+            [self reset];
+        }
+    }
+}
+
+-(void) reset {
+    [self unscheduleUpdate];
+    [self removeAllChildren];
+    [_balls removeAllObjects];
+    _shaking = NO;
+    [self scheduleUpdate];
 }
 
 @end
