@@ -9,6 +9,8 @@
 #import "MainLayer.h"
 #import "Ball.h"
 
+#define BATCH_TAG 123
+
 #define AMAX 400.0f
 #define VMAX 100.0f
 
@@ -47,8 +49,8 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"balls.plist"];
         
         // load texture into batch node to optimize rendering
-        CCSpriteBatchNode *batchNode = [CCSpriteBatchNode batchNodeWithFile:@"balls.png" capacity:50];
-        [self addChild:batchNode];
+        CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"balls.png" capacity:50];
+        [self addChild:batch z:0 tag:BATCH_TAG];
             
         [self scheduleUpdate];
 	}
@@ -106,6 +108,8 @@
 }
 
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    CCNode *batch = [self getChildByTag:BATCH_TAG];
+    
     //every multitouch adds a ball per touch
     for (UITouch *touch in touches) {
         //get touch coords
@@ -123,7 +127,7 @@
         ball.vel = ccp(0, 0);
         ball.acc = ccp(0, 0);
         _balls[_balls.count] = ball;
-        [self addChild:ball z:1];
+        [batch addChild:ball];
     }
 }
 
@@ -140,9 +144,13 @@
 
 -(void) reset {
     [self unscheduleUpdate];
-    [self removeAllChildren];
+    
+    CCNode *batch = [self getChildByTag:BATCH_TAG];
+    [batch removeAllChildren];
+   
     [_balls removeAllObjects];
-    _shaking = NO;
+     _shaking = NO;
+    
     [self scheduleUpdate];
 }
 
