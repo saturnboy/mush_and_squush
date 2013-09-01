@@ -31,14 +31,14 @@
 }
 
 +(CCScene *) scene {
-	CCScene *scene = [CCScene node];
-	MainLayer *layer = [MainLayer node];
-	[scene addChild:layer];
-	return scene;
+    CCScene *scene = [CCScene node];
+    MainLayer *layer = [MainLayer node];
+    [scene addChild:layer];
+    return scene;
 }
 
 -(id) init {
-	if ((self = [super init])) {
+    if ((self = [super init])) {
         self.touchEnabled = YES;
         self.accelerometerEnabled = YES;
         
@@ -53,12 +53,12 @@
         [self addChild:batch z:0 tag:BATCH_TAG];
             
         [self scheduleUpdate];
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void) dealloc {
-	[super dealloc];
+    [super dealloc];
 }
 
 - (void) update:(ccTime)dt {
