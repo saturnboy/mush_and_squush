@@ -13,8 +13,8 @@
 #define PTM_RATIO 32 //pixels to meters
 
 @interface MainLayer : CCLayer {
-	b2World* world;					// strong ref
-	GLESDebugDraw *m_debugDraw;		// strong ref
+    b2World* _world;
+    GLESDebugDraw *_debug;
 }
 
 +(CCScene *) scene;
