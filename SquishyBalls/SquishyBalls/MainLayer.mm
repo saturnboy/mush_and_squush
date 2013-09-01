@@ -37,6 +37,7 @@
         //init physics
         [self createWorld];
         [self createGround];
+        [self createFunnel];
         
         // load spritesheet
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"balls.plist"];
@@ -61,7 +62,6 @@
     [super dealloc];
 }
 
-
 -(void) createWorld {
     b2Vec2 gravity(0.0f, -10.0f);
     _world = new b2World(gravity);
@@ -72,7 +72,6 @@
     _debug->SetFlags(b2Draw::e_shapeBit + b2Draw::e_jointBit);
     _world->SetDebugDraw(_debug);
 }
-
 
 -(void) createGround {
     CGSize winsize = [CCDirector sharedDirector].winSize;
@@ -99,6 +98,26 @@
     
     // right
     shape.Set(b2Vec2(winsize.width/PTM_RATIO,winsize.height/PTM_RATIO), b2Vec2(winsize.width/PTM_RATIO,0));
+    body->CreateFixture(&shape,0);
+}
+
+-(void) createFunnel {
+    CGSize winsize = [CCDirector sharedDirector].winSize;
+    
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_staticBody;
+    bodyDef.position.Set(0, 0);
+    b2Body* body = _world->CreateBody(&bodyDef);
+	
+    //define the shape
+    b2EdgeShape shape;
+	
+    // right
+    shape.Set(b2Vec2(winsize.width*0.667/PTM_RATIO, 0), b2Vec2(winsize.width/PTM_RATIO, winsize.height/2/PTM_RATIO));
+    body->CreateFixture(&shape,0);
+	
+    // left
+    shape.Set(b2Vec2(winsize.width*0.333/PTM_RATIO, 0), b2Vec2(0, winsize.height/2/PTM_RATIO));
     body->CreateFixture(&shape,0);
 }
 
