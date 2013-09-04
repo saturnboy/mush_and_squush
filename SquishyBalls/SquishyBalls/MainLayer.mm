@@ -10,6 +10,7 @@
 #import "CCPhysicsSprite.h"
 
 #define BATCH_TAG 123
+#define SHAKE_ACCEL 1.9f
 
 #pragma mark - MainLayer
 
@@ -20,7 +21,9 @@
 -(void) addBall:(CGPoint)pos;
 @end
 
-@implementation MainLayer
+@implementation MainLayer {
+    BOOL _shaking;
+}
 
 +(CCScene *) scene {
     CCScene *scene = [CCScene node];
@@ -33,6 +36,7 @@
     if ((self = [super init])) {
         self.touchEnabled = YES;
         self.accelerometerEnabled = YES;
+        _shaking = NO;
         
         //init physics
         [self createWorld];
@@ -45,7 +49,6 @@
         // load texture into batch node to optimize rendering
         CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"balls.png" capacity:50];
         [self addChild:batch z:0 tag:BATCH_TAG];
-        
 
         [self scheduleUpdate];
     }
@@ -124,7 +127,7 @@
 -(void) draw {
     //NOTE: only for debug draw, disable this in a real app
     [super draw];
-    ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
+    ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position);
     kmGLPushMatrix();
     _world->DrawDebugData();
     kmGLPopMatrix();
@@ -165,7 +168,7 @@
     [ball setPosition:ccp(pos.x,pos.y)];
 }
 
--(void) update:(ccTime) dt {
+-(void) update:(ccTime)dt {
     //It is recommended that a fixed time step is used with Box2D for stability
     //of the simulation, however, we are using a variable time step here.
     //You need to make an informed choice, the following URL is useful
@@ -186,6 +189,36 @@
         pos = [[CCDirector sharedDirector] convertToGL:pos];
         [self addBall:pos];
     }
+}
+
+-(void) accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
+    if (!_shaking) {
+        if (acceleration.x > SHAKE_ACCEL || acceleration.x < -SHAKE_ACCEL ||
+            acceleration.y > SHAKE_ACCEL || acceleration.y < -SHAKE_ACCEL ||
+            acceleration.z > SHAKE_ACCEL || acceleration.z < -SHAKE_ACCEL) {
+            _shaking = YES;
+            [self reset];
+        }
+    }
+}
+
+-(void) reset {
+    [self unscheduleUpdate];
+    
+    CCNode *batch = [self getChildByTag:BATCH_TAG];
+    
+    //first, destroy everything that is a box2d body
+    for (CCNode *child in batch.children) {
+        if ([child isKindOfClass:[CCPhysicsSprite class]]) {
+            _world->DestroyBody(((CCPhysicsSprite *)child).b2Body);
+        }
+    }
+    
+    //second, remove all sprites from batch node
+    [batch removeAllChildren];
+    _shaking = NO;
+    
+    [self scheduleUpdate];
 }
 
 @end
