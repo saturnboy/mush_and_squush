@@ -20,6 +20,18 @@
 		D069485C17CAC06E007309C6 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = D069485717CAC06E007309C6 /* Default-Portrait~ipad.png */; };
 		D069485D17CAC06E007309C6 /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D069485817CAC06E007309C6 /* Icon-72@2x.png */; };
 		D069485E17CAC06E007309C6 /* Icon-Small-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D069485917CAC06E007309C6 /* Icon-Small-50@2x.png */; };
+		D090C43717D97FBA00647998 /* Ball_withDrawingPrimatives.mm in Sources */ = {isa = PBXBuildFile; fileRef = D090C43217D97FBA00647998 /* Ball_withDrawingPrimatives.mm */; };
+		D090C43817D97FBA00647998 /* Ball_withDrawNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = D090C43417D97FBA00647998 /* Ball_withDrawNode.mm */; };
+		D090C43917D97FBA00647998 /* Ball_withSprite.mm in Sources */ = {isa = PBXBuildFile; fileRef = D090C43617D97FBA00647998 /* Ball_withSprite.mm */; };
+		D0C17F7217D6FA34002CC9C6 /* SoftBall.mm in Sources */ = {isa = PBXBuildFile; fileRef = D0C17F7117D6FA34002CC9C6 /* SoftBall.mm */; };
+		D0C17F7C17D6FEB7002CC9C6 /* beachballs-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7417D6FEB7002CC9C6 /* beachballs-hd.plist */; };
+		D0C17F7D17D6FEB7002CC9C6 /* beachballs-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7517D6FEB7002CC9C6 /* beachballs-hd.png */; };
+		D0C17F7E17D6FEB7002CC9C6 /* beachballs-ipad.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7617D6FEB7002CC9C6 /* beachballs-ipad.plist */; };
+		D0C17F7F17D6FEB7002CC9C6 /* beachballs-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7717D6FEB7002CC9C6 /* beachballs-ipad.png */; };
+		D0C17F8017D6FEB7002CC9C6 /* beachballs-ipadhd.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7817D6FEB7002CC9C6 /* beachballs-ipadhd.plist */; };
+		D0C17F8117D6FEB7002CC9C6 /* beachballs-ipadhd.png in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7917D6FEB7002CC9C6 /* beachballs-ipadhd.png */; };
+		D0C17F8217D6FEB7002CC9C6 /* beachballs.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7A17D6FEB7002CC9C6 /* beachballs.plist */; };
+		D0C17F8317D6FEB7002CC9C6 /* beachballs.png in Resources */ = {isa = PBXBuildFile; fileRef = D0C17F7B17D6FEB7002CC9C6 /* beachballs.png */; };
 		D0C7807E17CA78C100FDA567 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0C7807D17CA78C100FDA567 /* QuartzCore.framework */; };
 		D0C7808017CA78C100FDA567 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0C7807F17CA78C100FDA567 /* OpenGLES.framework */; };
 		D0C7808217CA78C100FDA567 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0C7808117CA78C100FDA567 /* OpenAL.framework */; };
@@ -214,6 +226,22 @@
 		D069485717CAC06E007309C6 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait~ipad.png"; path = "Resources/Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		D069485817CAC06E007309C6 /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72@2x.png"; path = "Resources/Icon-72@2x.png"; sourceTree = "<group>"; };
 		D069485917CAC06E007309C6 /* Icon-Small-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50@2x.png"; path = "Resources/Icon-Small-50@2x.png"; sourceTree = "<group>"; };
+		D090C43117D97FBA00647998 /* Ball_withDrawingPrimatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball_withDrawingPrimatives.h; sourceTree = "<group>"; };
+		D090C43217D97FBA00647998 /* Ball_withDrawingPrimatives.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ball_withDrawingPrimatives.mm; sourceTree = "<group>"; };
+		D090C43317D97FBA00647998 /* Ball_withDrawNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball_withDrawNode.h; sourceTree = "<group>"; };
+		D090C43417D97FBA00647998 /* Ball_withDrawNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ball_withDrawNode.mm; sourceTree = "<group>"; };
+		D090C43517D97FBA00647998 /* Ball_withSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ball_withSprite.h; sourceTree = "<group>"; };
+		D090C43617D97FBA00647998 /* Ball_withSprite.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ball_withSprite.mm; sourceTree = "<group>"; };
+		D0C17F7017D6FA34002CC9C6 /* SoftBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftBall.h; sourceTree = "<group>"; };
+		D0C17F7117D6FA34002CC9C6 /* SoftBall.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoftBall.mm; sourceTree = "<group>"; };
+		D0C17F7417D6FEB7002CC9C6 /* beachballs-hd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "beachballs-hd.plist"; path = "Resources/beachballs-hd.plist"; sourceTree = "<group>"; };
+		D0C17F7517D6FEB7002CC9C6 /* beachballs-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "beachballs-hd.png"; path = "Resources/beachballs-hd.png"; sourceTree = "<group>"; };
+		D0C17F7617D6FEB7002CC9C6 /* beachballs-ipad.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "beachballs-ipad.plist"; path = "Resources/beachballs-ipad.plist"; sourceTree = "<group>"; };
+		D0C17F7717D6FEB7002CC9C6 /* beachballs-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "beachballs-ipad.png"; path = "Resources/beachballs-ipad.png"; sourceTree = "<group>"; };
+		D0C17F7817D6FEB7002CC9C6 /* beachballs-ipadhd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "beachballs-ipadhd.plist"; path = "Resources/beachballs-ipadhd.plist"; sourceTree = "<group>"; };
+		D0C17F7917D6FEB7002CC9C6 /* beachballs-ipadhd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "beachballs-ipadhd.png"; path = "Resources/beachballs-ipadhd.png"; sourceTree = "<group>"; };
+		D0C17F7A17D6FEB7002CC9C6 /* beachballs.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = beachballs.plist; path = Resources/beachballs.plist; sourceTree = "<group>"; };
+		D0C17F7B17D6FEB7002CC9C6 /* beachballs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = beachballs.png; path = Resources/beachballs.png; sourceTree = "<group>"; };
 		D0C7807A17CA78C100FDA567 /* SquishyBalls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SquishyBalls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0C7807D17CA78C100FDA567 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D0C7807F17CA78C100FDA567 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -640,6 +668,36 @@
 			name = splash;
 			sourceTree = "<group>";
 		};
+		D0C17F7317D6FE9D002CC9C6 /* balls */ = {
+			isa = PBXGroup;
+			children = (
+				D03B6E2017CD994A002C4E44 /* balls.plist */,
+				D03B6E2117CD994A002C4E44 /* balls.png */,
+				D03B6E1A17CD994A002C4E44 /* balls-hd.plist */,
+				D03B6E1B17CD994A002C4E44 /* balls-hd.png */,
+				D03B6E1C17CD994A002C4E44 /* balls-ipad.plist */,
+				D03B6E1D17CD994A002C4E44 /* balls-ipad.png */,
+				D03B6E1E17CD994A002C4E44 /* balls-ipadhd.plist */,
+				D03B6E1F17CD994A002C4E44 /* balls-ipadhd.png */,
+			);
+			name = balls;
+			sourceTree = "<group>";
+		};
+		D0C17F8417D6FEBC002CC9C6 /* beachballs */ = {
+			isa = PBXGroup;
+			children = (
+				D0C17F7A17D6FEB7002CC9C6 /* beachballs.plist */,
+				D0C17F7B17D6FEB7002CC9C6 /* beachballs.png */,
+				D0C17F7417D6FEB7002CC9C6 /* beachballs-hd.plist */,
+				D0C17F7517D6FEB7002CC9C6 /* beachballs-hd.png */,
+				D0C17F7617D6FEB7002CC9C6 /* beachballs-ipad.plist */,
+				D0C17F7717D6FEB7002CC9C6 /* beachballs-ipad.png */,
+				D0C17F7817D6FEB7002CC9C6 /* beachballs-ipadhd.plist */,
+				D0C17F7917D6FEB7002CC9C6 /* beachballs-ipadhd.png */,
+			);
+			name = beachballs;
+			sourceTree = "<group>";
+		};
 		D0C7807117CA78C100FDA567 = {
 			isa = PBXGroup;
 			children = (
@@ -681,6 +739,14 @@
 				D0C782B617CA78C400FDA567 /* AppDelegate.mm */,
 				D0C782B817CA78C400FDA567 /* MainLayer.h */,
 				D0C782B917CA78C400FDA567 /* MainLayer.mm */,
+				D0C17F7017D6FA34002CC9C6 /* SoftBall.h */,
+				D0C17F7117D6FA34002CC9C6 /* SoftBall.mm */,
+				D090C43117D97FBA00647998 /* Ball_withDrawingPrimatives.h */,
+				D090C43217D97FBA00647998 /* Ball_withDrawingPrimatives.mm */,
+				D090C43317D97FBA00647998 /* Ball_withDrawNode.h */,
+				D090C43417D97FBA00647998 /* Ball_withDrawNode.mm */,
+				D090C43517D97FBA00647998 /* Ball_withSprite.h */,
+				D090C43617D97FBA00647998 /* Ball_withSprite.mm */,
 				D0C782BE17CA78C400FDA567 /* GLES-Render.h */,
 				D0C782BF17CA78C400FDA567 /* GLES-Render.mm */,
 				D0C7809217CA78C100FDA567 /* Resources */,
@@ -693,14 +759,8 @@
 		D0C7809217CA78C100FDA567 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D03B6E2017CD994A002C4E44 /* balls.plist */,
-				D03B6E2117CD994A002C4E44 /* balls.png */,
-				D03B6E1A17CD994A002C4E44 /* balls-hd.plist */,
-				D03B6E1B17CD994A002C4E44 /* balls-hd.png */,
-				D03B6E1C17CD994A002C4E44 /* balls-ipad.plist */,
-				D03B6E1D17CD994A002C4E44 /* balls-ipad.png */,
-				D03B6E1E17CD994A002C4E44 /* balls-ipadhd.plist */,
-				D03B6E1F17CD994A002C4E44 /* balls-ipadhd.png */,
+				D0C17F8417D6FEBC002CC9C6 /* beachballs */,
+				D0C17F7317D6FE9D002CC9C6 /* balls */,
 				D069486017CAC094007309C6 /* splash */,
 				D069485F17CAC07E007309C6 /* icon */,
 				D0C780A717CA78C100FDA567 /* Info.plist */,
@@ -1305,6 +1365,14 @@
 				D03B6E2717CD994A002C4E44 /* balls-ipadhd.png in Resources */,
 				D03B6E2817CD994A002C4E44 /* balls.plist in Resources */,
 				D03B6E2917CD994A002C4E44 /* balls.png in Resources */,
+				D0C17F7C17D6FEB7002CC9C6 /* beachballs-hd.plist in Resources */,
+				D0C17F7D17D6FEB7002CC9C6 /* beachballs-hd.png in Resources */,
+				D0C17F7E17D6FEB7002CC9C6 /* beachballs-ipad.plist in Resources */,
+				D0C17F7F17D6FEB7002CC9C6 /* beachballs-ipad.png in Resources */,
+				D0C17F8017D6FEB7002CC9C6 /* beachballs-ipadhd.plist in Resources */,
+				D0C17F8117D6FEB7002CC9C6 /* beachballs-ipadhd.png in Resources */,
+				D0C17F8217D6FEB7002CC9C6 /* beachballs.plist in Resources */,
+				D0C17F8317D6FEB7002CC9C6 /* beachballs.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1472,6 +1540,10 @@
 				D0C782B717CA78C400FDA567 /* AppDelegate.mm in Sources */,
 				D0C782BA17CA78C400FDA567 /* MainLayer.mm in Sources */,
 				D0C782C017CA78C400FDA567 /* GLES-Render.mm in Sources */,
+				D0C17F7217D6FA34002CC9C6 /* SoftBall.mm in Sources */,
+				D090C43717D97FBA00647998 /* Ball_withDrawingPrimatives.mm in Sources */,
+				D090C43817D97FBA00647998 /* Ball_withDrawNode.mm in Sources */,
+				D090C43917D97FBA00647998 /* Ball_withSprite.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
