@@ -10,8 +10,6 @@
 #import "Box2D.h"
 #import "GLES-Render.h"
 
-#define PTM_RATIO 32 //pixels to meters
-
 @interface MainLayer : CCLayer {
     b2World* _world;
     GLESDebugDraw *_debug;

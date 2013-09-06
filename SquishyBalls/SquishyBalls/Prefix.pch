@@ -12,3 +12,5 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #endif
+
+#define PTM_RATIO 16.0f //pixels to meters

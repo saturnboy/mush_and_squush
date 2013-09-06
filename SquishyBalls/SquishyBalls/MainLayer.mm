@@ -7,7 +7,7 @@
 //
 
 #import "MainLayer.h"
-#import "CCPhysicsSprite.h"
+#import "SoftBall.h"
 
 #define BATCH_TAG 123
 #define SHAKE_ACCEL 1.9f
@@ -44,10 +44,10 @@
         [self createFunnel];
         
         // load spritesheet
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"balls.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"beachballs.plist"];
         
         // load texture into batch node to optimize rendering
-        CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"balls.png" capacity:50];
+        CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"beachballs.png" capacity:50];
         [self addChild:batch z:0 tag:BATCH_TAG];
 
         [self scheduleUpdate];
@@ -136,36 +136,14 @@
 -(void) addBall:(CGPoint)pos {
     CCLOG(@"ADD BALL: %.1f,%.1f", pos.x, pos.y);
     
-    //get the sprite
-    NSString *name = (CCRANDOM_0_1() < 0.2 ? @"ball-pink.png" : @"ball.png");
-    CCPhysicsSprite *ball = [CCPhysicsSprite spriteWithSpriteFrameName:name];
-    
-    //define the body
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
-    b2Body *body = _world->CreateBody(&bodyDef);
-    
-    //define the body's shape
-    //b2PolygonShape dynamicBox;
-    //dynamicBox.SetAsBox(radius,radius);
-    b2CircleShape shape;
-    shape.m_radius = ball.contentSize.width / PTM_RATIO / 2;
-    
-    //define the body's fixture
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &shape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    body->CreateFixture(&fixtureDef);
+    //init the ball
+    //Ball *ball = [[Ball alloc] initWithName:@"beachball.png" pos:pos world:_world];
+    //Ball_withDrawNode *ball = [[Ball_withDrawNode alloc] initWithPos:pos radius:20.0f world:_world];
+    SoftBall *ball = [[SoftBall alloc] initWithName:@"beachball.png" pos:pos world:_world];
     
     //find the batch node, add ball as child
     CCNode *batch = [self getChildByTag:BATCH_TAG];
     [batch addChild:ball];
-    
-    [ball setPTMRatio:PTM_RATIO];
-    [ball setB2Body:body];
-    [ball setPosition:ccp(pos.x,pos.y)];
 }
 
 -(void) update:(ccTime)dt {
@@ -209,7 +187,7 @@
     
     //first, destroy everything that is a box2d body
     for (CCNode *child in batch.children) {
-        if ([child isKindOfClass:[CCPhysicsSprite class]]) {
+        if ([child respondsToSelector:@selector(b2Body)]) {
             _world->DestroyBody(((CCPhysicsSprite *)child).b2Body);
         }
     }
