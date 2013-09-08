@@ -21,8 +21,8 @@
     if ((self = [super init])) {
         _name = name;
         
-        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"ball.png"];
-        CCLOG(@"%@ %.1fx%.1f", name, frame.rect.size.width, frame.rect.size.height);
+        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:name];
+        CCLOG(@"IMAGE %@ %.1fx%.1f", name, frame.rect.size.width, frame.rect.size.height);
         
         float vertRadius = frame.rect.size.width / 7.0f;
         float centerRadius = vertRadius * 0.6f;
