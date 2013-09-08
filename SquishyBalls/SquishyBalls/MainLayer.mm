@@ -40,20 +40,13 @@
         self.accelerometerEnabled = YES;
         _shaking = NO;
         
-        //init physics
+        //build the box2d world
         [self createWorld];
         [self createGround];
         [self createFunnel];
         
-        // load spritesheet
+        //load spritesheet
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"softy.plist"];
-        
-        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"ball.png"];
-        CCLOG(@"BALL %.1fx%.1f",frame.rect.size.width, frame.rect.size.height);
-        
-        // load texture into batch node to optimize rendering
-        //CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"beachballs.png" capacity:50];
-        //[self addChild:batch z:0 tag:BATCH_TAG];
 
         [self scheduleUpdate];
     }
