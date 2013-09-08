@@ -1,19 +1,17 @@
 //
-//  SoftBall.mm
+//  SoftBox.mm
 //  SquishyBalls
 //
 //  Created by Justin on 9/3/13.
 //  Copyright (c) 2013 Saturnboy. All rights reserved.
 //
 
-#import "SoftBall.h"
+#import "SoftBox.h"
 #import <vector>
 
-#define NUM_EDGES 8
-
-@implementation SoftBall {
+@implementation SoftBox {
     NSString *_name;
-    b2Body *_center;
+    b2Body* _center;
     std::vector<b2Body*> _verts;
     std::vector<b2Joint*> _edges;
     std::vector<b2Joint*> _spokes;
@@ -26,13 +24,12 @@
         CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"ball.png"];
         CCLOG(@"%@ %.1fx%.1f", name, frame.rect.size.width, frame.rect.size.height);
         
-        float vertRadius = frame.rect.size.width / 8.0f;
+        float vertRadius = frame.rect.size.width / 7.0f;
         float centerRadius = vertRadius * 0.6f;
         float R = (frame.rect.size.width / 2.0f - vertRadius) / PTM_RATIO;
         CCLOG(@"RADIUS %.3f", R);
         CCLOG(@"VERT RADIUS %.3f", vertRadius);
         CCLOG(@"CENTER RADIUS %.3f", centerRadius);
-
         
         b2Vec2 center = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
         CCLOG(@"CENTER (%.3f,%.3f)", center.x, center.y);
@@ -57,25 +54,62 @@
         
         //next, all the vertex bodies
         shape.m_radius = vertRadius / PTM_RATIO;
-        for (int i = 0; i < NUM_EDGES; i++) {
-            float theta = i * 2.0f * M_PI / NUM_EDGES;
-            b2Vec2 vertPos = b2Vec2(R * cosf(theta), R * sinf(theta)) + center;
-            CCLOG(@"EDGE%d theta=%.3f (%.3f,%.3f)", i, theta, vertPos.x, vertPos.y);
-            
-            //only the vertex pos changes
-            bodyDef.position = vertPos;
-            
-            b2Body *body = world->CreateBody(&bodyDef);
-            body->CreateFixture(&fixtureDef);
-            
-            _verts.push_back(body);
-        }
+        
+        //center right
+        bodyDef.position = b2Vec2(R, 0.0f) + center;
+        b2Body *cr = world->CreateBody(&bodyDef);
+        cr->CreateFixture(&fixtureDef);
+        _verts.push_back(cr);
+        
+        //top right
+        bodyDef.position = b2Vec2(R, R) + center;
+        b2Body *tr = world->CreateBody(&bodyDef);
+        tr->CreateFixture(&fixtureDef);
+        _verts.push_back(tr);
+
+        //top center
+        bodyDef.position = b2Vec2(0.0f, R) + center;
+        b2Body *tc = world->CreateBody(&bodyDef);
+        tc->CreateFixture(&fixtureDef);
+        _verts.push_back(tc);
+        
+        //top left
+        bodyDef.position = b2Vec2(-R, R) + center;
+        b2Body *tl = world->CreateBody(&bodyDef);
+        tl->CreateFixture(&fixtureDef);
+        _verts.push_back(tl);
+        
+        //center left
+        bodyDef.position = b2Vec2(-R, 0.0f) + center;
+        b2Body *cl = world->CreateBody(&bodyDef);
+        cl->CreateFixture(&fixtureDef);
+        _verts.push_back(cl);
+        
+        //bottom left
+        bodyDef.position = b2Vec2(-R, -R) + center;
+        b2Body *bl = world->CreateBody(&bodyDef);
+        bl->CreateFixture(&fixtureDef);
+        _verts.push_back(bl);
+        
+        //bottom center
+        shape.m_radius = vertRadius / PTM_RATIO;
+        bodyDef.position = b2Vec2(0.0f, -R) + center;
+        b2Body *bc = world->CreateBody(&bodyDef);
+        bc->CreateFixture(&fixtureDef);
+        _verts.push_back(bc);
+        
+        //bottom right
+        shape.m_radius = vertRadius / PTM_RATIO;
+        bodyDef.position = b2Vec2(R, -R) + center;
+        b2Body *br = world->CreateBody(&bodyDef);
+        br->CreateFixture(&fixtureDef);
+        _verts.push_back(br);
         
         //last, make all the joints (edges & spokes)
         b2DistanceJointDef jointDef;
-        for (int i = 0; i < NUM_EDGES; i++) {
+        for (int i = 0; i < _verts.size(); i++) {
             //joints between verts (aka the edges)
-            int j = (i == 0 ? NUM_EDGES-1 : i-1);
+            int j = (i == 0 ? _verts.size()-1 : i-1);
             jointDef.Initialize(_verts[i], _verts[j], _verts[i]->GetPosition(), _verts[j]->GetPosition());
             jointDef.collideConnected = true;
             jointDef.frequencyHz = 8.0f;
