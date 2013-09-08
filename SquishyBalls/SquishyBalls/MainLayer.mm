@@ -8,6 +8,7 @@
 
 #import "MainLayer.h"
 #import "SoftBall.h"
+#import "SoftBox.h"
 
 #define BATCH_TAG 123
 #define SHAKE_ACCEL 1.9f
@@ -19,6 +20,7 @@
 -(void) createGround;
 -(void) createFunnel;
 -(void) addBall:(CGPoint)pos;
+-(void) addCrate:(CGPoint)pos;
 @end
 
 @implementation MainLayer {
@@ -44,11 +46,14 @@
         [self createFunnel];
         
         // load spritesheet
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"beachballs.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"softy.plist"];
+        
+        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"ball.png"];
+        CCLOG(@"BALL %.1fx%.1f",frame.rect.size.width, frame.rect.size.height);
         
         // load texture into batch node to optimize rendering
-        CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"beachballs.png" capacity:50];
-        [self addChild:batch z:0 tag:BATCH_TAG];
+        //CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"beachballs.png" capacity:50];
+        //[self addChild:batch z:0 tag:BATCH_TAG];
 
         [self scheduleUpdate];
     }
@@ -112,14 +117,13 @@
     bodyDef.position.Set(0, 0);
     b2Body* body = _world->CreateBody(&bodyDef);
 	
-    //define the shape
     b2EdgeShape shape;
 	
-    // right
+    //right
     shape.Set(b2Vec2(winsize.width*0.667/PTM_RATIO, 0), b2Vec2(winsize.width/PTM_RATIO, winsize.height/2/PTM_RATIO));
     body->CreateFixture(&shape,0);
 	
-    // left
+    //left
     shape.Set(b2Vec2(winsize.width*0.333/PTM_RATIO, 0), b2Vec2(0, winsize.height/2/PTM_RATIO));
     body->CreateFixture(&shape,0);
 }
@@ -134,16 +138,15 @@
 }
 
 -(void) addBall:(CGPoint)pos {
-    CCLOG(@"ADD BALL: %.1f,%.1f", pos.x, pos.y);
-    
-    //init the ball
-    //Ball *ball = [[Ball alloc] initWithName:@"beachball.png" pos:pos world:_world];
-    //Ball_withDrawNode *ball = [[Ball_withDrawNode alloc] initWithPos:pos radius:20.0f world:_world];
-    SoftBall *ball = [[SoftBall alloc] initWithName:@"beachball.png" pos:pos world:_world];
-    
-    //find the batch node, add ball as child
-    CCNode *batch = [self getChildByTag:BATCH_TAG];
-    [batch addChild:ball];
+    CCLOG(@"ADD BALL %.1f,%.1f", pos.x, pos.y);
+    SoftBall *ball = [[SoftBall alloc] initWithName:@"ball.png" pos:pos world:_world];
+    [self addChild:ball];
+}
+
+-(void) addCrate:(CGPoint)pos {
+    CCLOG(@"ADD CRATE %.1f,%.1f", pos.x, pos.y);
+    SoftBox *box = [[SoftBox alloc] initWithName:@"crate.png" pos:pos world:_world];
+    [self addChild:box];
 }
 
 -(void) update:(ccTime)dt {
@@ -165,7 +168,12 @@
     for ( UITouch *touch in touches ) {
         CGPoint pos = [touch locationInView:[touch view]];
         pos = [[CCDirector sharedDirector] convertToGL:pos];
-        [self addBall:pos];
+        
+        if (CCRANDOM_0_1() < 0.8) {
+            [self addBall:pos];
+        } else {
+            [self addCrate:pos];
+        }
     }
 }
 
@@ -183,17 +191,24 @@
 -(void) reset {
     [self unscheduleUpdate];
     
-    CCNode *batch = [self getChildByTag:BATCH_TAG];
+    //just destory the entire world (probably leaking...)
+    delete _world;
+    _world = NULL;
     
-    //first, destroy everything that is a box2d body
-    for (CCNode *child in batch.children) {
-        if ([child respondsToSelector:@selector(b2Body)]) {
-            _world->DestroyBody(((CCPhysicsSprite *)child).b2Body);
+    //remove any children
+    for (CCNode *child in self.children) {
+        if ([child isKindOfClass:[SoftBall class]]) {
+            [self removeChild:child];
+        } else if ([child isKindOfClass:[SoftBox class]]) {
+            [self removeChild:child];
         }
     }
     
-    //second, remove all sprites from batch node
-    [batch removeAllChildren];
+    //rebuild the world
+    [self createWorld];
+    [self createGround];
+    [self createFunnel];
+    
     _shaking = NO;
     
     [self scheduleUpdate];
