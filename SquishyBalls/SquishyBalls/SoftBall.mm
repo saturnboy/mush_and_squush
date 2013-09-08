@@ -34,8 +34,8 @@
         CCLOG(@"CENTER RADIUS %.3f", centerRadius);
 
         
-        b2Vec2 center = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
-        CCLOG(@"CENTER (%.3f,%.3f)", center.x, center.y);
+        b2Vec2 centerPos = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
+        CCLOG(@"CENTER (%.3f,%.3f)", centerPos.x, centerPos.y);
         
         //first, the center body
         b2CircleShape shape;
@@ -43,7 +43,7 @@
         
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position = center;
+        bodyDef.position = centerPos;
         bodyDef.angularDamping = 1.0f;
         
         b2FixtureDef fixtureDef;
@@ -59,7 +59,7 @@
         shape.m_radius = vertRadius / PTM_RATIO;
         for (int i = 0; i < NUM_EDGES; i++) {
             float theta = i * 2.0f * M_PI / NUM_EDGES;
-            b2Vec2 vertPos = b2Vec2(R * cosf(theta), R * sinf(theta)) + center;
+            b2Vec2 vertPos = b2Vec2(R * cosf(theta), R * sinf(theta)) + centerPos;
             CCLOG(@"EDGE%d theta=%.3f (%.3f,%.3f)", i, theta, vertPos.x, vertPos.y);
             
             //only the vertex pos changes
@@ -84,7 +84,7 @@
             _edges.push_back(edge);
             
             //joints between vert and center (aka the spokes)
-            jointDef.Initialize(_verts[i], _center, _verts[i]->GetPosition(), center);
+            jointDef.Initialize(_verts[i], _center, _verts[i]->GetPosition(), centerPos);
             jointDef.collideConnected = true;
             jointDef.frequencyHz = 8.0f;
             jointDef.dampingRatio = 0.6f;

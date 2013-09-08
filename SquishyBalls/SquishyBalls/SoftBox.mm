@@ -31,8 +31,8 @@
         CCLOG(@"VERT RADIUS %.3f", vertRadius);
         CCLOG(@"CENTER RADIUS %.3f", centerRadius);
         
-        b2Vec2 center = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
-        CCLOG(@"CENTER (%.3f,%.3f)", center.x, center.y);
+        b2Vec2 centerPos = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
+        CCLOG(@"CENTER (%.3f,%.3f)", centerPos.x, centerPos.y);
         
         //first, the center body
         b2CircleShape shape;
@@ -40,7 +40,7 @@
         
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position = center;
+        bodyDef.position = centerPos;
         bodyDef.angularDamping = 1.0f;
         
         b2FixtureDef fixtureDef;
@@ -56,51 +56,51 @@
         shape.m_radius = vertRadius / PTM_RATIO;
         
         //center right
-        bodyDef.position = b2Vec2(R, 0.0f) + center;
+        bodyDef.position = b2Vec2(R, 0.0f) + centerPos;
         b2Body *cr = world->CreateBody(&bodyDef);
         cr->CreateFixture(&fixtureDef);
         _verts.push_back(cr);
         
         //top right
-        bodyDef.position = b2Vec2(R, R) + center;
+        bodyDef.position = b2Vec2(R, R) + centerPos;
         b2Body *tr = world->CreateBody(&bodyDef);
         tr->CreateFixture(&fixtureDef);
         _verts.push_back(tr);
 
         //top center
-        bodyDef.position = b2Vec2(0.0f, R) + center;
+        bodyDef.position = b2Vec2(0.0f, R) + centerPos;
         b2Body *tc = world->CreateBody(&bodyDef);
         tc->CreateFixture(&fixtureDef);
         _verts.push_back(tc);
         
         //top left
-        bodyDef.position = b2Vec2(-R, R) + center;
+        bodyDef.position = b2Vec2(-R, R) + centerPos;
         b2Body *tl = world->CreateBody(&bodyDef);
         tl->CreateFixture(&fixtureDef);
         _verts.push_back(tl);
         
         //center left
-        bodyDef.position = b2Vec2(-R, 0.0f) + center;
+        bodyDef.position = b2Vec2(-R, 0.0f) + centerPos;
         b2Body *cl = world->CreateBody(&bodyDef);
         cl->CreateFixture(&fixtureDef);
         _verts.push_back(cl);
         
         //bottom left
-        bodyDef.position = b2Vec2(-R, -R) + center;
+        bodyDef.position = b2Vec2(-R, -R) + centerPos;
         b2Body *bl = world->CreateBody(&bodyDef);
         bl->CreateFixture(&fixtureDef);
         _verts.push_back(bl);
         
         //bottom center
         shape.m_radius = vertRadius / PTM_RATIO;
-        bodyDef.position = b2Vec2(0.0f, -R) + center;
+        bodyDef.position = b2Vec2(0.0f, -R) + centerPos;
         b2Body *bc = world->CreateBody(&bodyDef);
         bc->CreateFixture(&fixtureDef);
         _verts.push_back(bc);
         
         //bottom right
         shape.m_radius = vertRadius / PTM_RATIO;
-        bodyDef.position = b2Vec2(R, -R) + center;
+        bodyDef.position = b2Vec2(R, -R) + centerPos;
         b2Body *br = world->CreateBody(&bodyDef);
         br->CreateFixture(&fixtureDef);
         _verts.push_back(br);
@@ -118,7 +118,7 @@
             _edges.push_back(edge);
             
             //joints between vert and center (aka the spokes)
-            jointDef.Initialize(_verts[i], _center, _verts[i]->GetPosition(), center);
+            jointDef.Initialize(_verts[i], _center, _verts[i]->GetPosition(), centerPos);
             jointDef.collideConnected = true;
             jointDef.frequencyHz = 8.0f;
             jointDef.dampingRatio = 0.6f;
