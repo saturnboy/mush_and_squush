@@ -11,26 +11,38 @@
 
 @implementation SoftBox {
     NSString *_name;
-    b2Body* _center;
+    CCTexture2D *_tex;
+    b2Body *_center;
     std::vector<b2Body*> _verts;
     std::vector<b2Joint*> _edges;
     std::vector<b2Joint*> _spokes;
+    float _vertRadius;
+    float _vertRadiusDiag;
+    ccVertex2F *_posCoords;
+    ccVertex2F *_texCoords;
 }
 
 - (id) initWithName:(NSString *)name pos:(CGPoint)pos world:(b2World *)world {
     if ((self = [super init])) {
         _name = name;
         
-        CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:name];
-        CCLOG(@"IMAGE %@ %.1fx%.1f", name, frame.rect.size.width, frame.rect.size.height);
+        //init texture
+        _tex = [[CCTextureCache sharedTextureCache] textureForKey:name];
+        self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTexture];
+        CCLOG(@"TEXTURE %@ size=%dx%d scale=%.1f", name, _tex.pixelsWide, _tex.pixelsHigh, CC_CONTENT_SCALE_FACTOR());
         
-        float vertRadius = frame.rect.size.width / 7.0f;
-        float centerRadius = vertRadius * 0.6f;
-        float R = (frame.rect.size.width / 2.0f - vertRadius) / PTM_RATIO;
+        //compute various radii from texture width (scale width on retina)
+        _vertRadius = _tex.pixelsWide / CC_CONTENT_SCALE_FACTOR() / 7.0f;
+        _vertRadiusDiag = sqrtf(_vertRadius * _vertRadius * 2.0f);
+        float centerRadius = _vertRadius * 0.6f;
+        
+        //subtract vertRadius to keep entire vert circle inside master ball
+        float R = (_tex.pixelsWide / CC_CONTENT_SCALE_FACTOR() / 2.0f - _vertRadius) / PTM_RATIO;
         CCLOG(@"RADIUS %.3f", R);
-        CCLOG(@"VERT RADIUS %.3f", vertRadius);
+        CCLOG(@"VERT RADIUS %.3f", _vertRadius);
         CCLOG(@"CENTER RADIUS %.3f", centerRadius);
         
+        //compute center pos
         b2Vec2 centerPos = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
         CCLOG(@"CENTER (%.3f,%.3f)", centerPos.x, centerPos.y);
         
@@ -53,7 +65,7 @@
         _center->CreateFixture(&fixtureDef);
         
         //next, all the vertex bodies
-        shape.m_radius = vertRadius / PTM_RATIO;
+        shape.m_radius = _vertRadius / PTM_RATIO;
         
         //center right
         bodyDef.position = b2Vec2(R, 0.0f) + centerPos;
@@ -92,14 +104,12 @@
         _verts.push_back(bl);
         
         //bottom center
-        shape.m_radius = vertRadius / PTM_RATIO;
         bodyDef.position = b2Vec2(0.0f, -R) + centerPos;
         b2Body *bc = world->CreateBody(&bodyDef);
         bc->CreateFixture(&fixtureDef);
         _verts.push_back(bc);
         
         //bottom right
-        shape.m_radius = vertRadius / PTM_RATIO;
         bodyDef.position = b2Vec2(R, -R) + centerPos;
         b2Body *br = world->CreateBody(&bodyDef);
         br->CreateFixture(&fixtureDef);
@@ -129,4 +139,73 @@
     return self;
 }
 
+-(void) dealloc {
+	free(_posCoords);
+	free(_texCoords);
+    _name = nil;
+    _tex = nil;
+    _center = nil;
+    [super dealloc];
+}
+
+-(void) draw {
+    int N = 10;
+    
+    //init my arrays
+    if (_posCoords) {
+        free(_posCoords);
+    }
+    if (_texCoords) {
+        free(_texCoords);
+    }
+    _posCoords = (ccVertex2F *) malloc(sizeof(ccVertex2F) * N);
+    _texCoords = (ccVertex2F *) malloc(sizeof(ccVertex2F) * N);
+    
+    //compute position coords (where my verts are in the pixel world)
+    _posCoords[0] = (ccVertex2F) { _center->GetPosition().x * PTM_RATIO, _center->GetPosition().y * PTM_RATIO };
+    for (int i = 0; i < 8; i++) {
+        //compute dist between center and vert center
+        float dx = _center->GetPosition().x - _verts[i]->GetPosition().x;
+        float dy = _center->GetPosition().y - _verts[i]->GetPosition().y;
+        float R = sqrtf(dx*dx + dy*dy) * PTM_RATIO;
+        float r = (i % 2 == 0 ? _vertRadius : _vertRadiusDiag);
+        
+        //add vert radius to compute new vert (all the way to the edge)
+        float x = (_verts[i]->GetPosition().x - _center->GetPosition().x) * (1 + r/R) * PTM_RATIO + _posCoords[0].x;
+        float y = (_verts[i]->GetPosition().y - _center->GetPosition().y) * (1 + r/R) * PTM_RATIO + _posCoords[0].y;
+        _posCoords[i+1] = (ccVertex2F) { x, y };
+        //CCLOG(@"POS COORDS %d %.3f %.3f,%.3f", i+1, R, x, y);
+    }
+    _posCoords[N-1] = _posCoords[1];
+    
+    //compute texture coords (in range [0,1])
+    _texCoords[0] = (ccVertex2F) { 0.5f, 0.5f };
+    _texCoords[1] = (ccVertex2F) { 1.0f, 0.5f };
+    _texCoords[2] = (ccVertex2F) { 1.0f, 1.0f };
+    _texCoords[3] = (ccVertex2F) { 0.5f, 1.0f };
+    _texCoords[4] = (ccVertex2F) { 0.0f, 1.0f };
+    _texCoords[5] = (ccVertex2F) { 0.0f, 0.5f };
+    _texCoords[6] = (ccVertex2F) { 0.0f, 0.0f };
+    _texCoords[7] = (ccVertex2F) { 0.5f, 0.0f };
+    _texCoords[8] = (ccVertex2F) { 1.0f, 0.0f };
+    _texCoords[9] = _texCoords[1];
+    
+    CC_NODE_DRAW_SETUP();
+    
+    ccGLBindTexture2D(_tex.name);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
+    ccGLBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+    
+    ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position | kCCVertexAttribFlag_TexCoords);
+    
+    glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, _posCoords);
+    glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, 0, _texCoords);
+    
+    glDrawArrays(GL_TRIANGLE_FAN, 0, N);
+}
+
 @end
+

@@ -10,8 +10,10 @@
 #import "SoftBall.h"
 #import "SoftBox.h"
 
-#define BATCH_TAG 123
+#define VEL_ITER 8
+#define POS_ITER 2
 #define SHAKE_ACCEL 1.9f
+#define MIN_TOUCH 30
 
 #pragma mark - MainLayer
 
@@ -25,6 +27,8 @@
 
 @implementation MainLayer {
     BOOL _shaking;
+    BOOL _debugging;
+    CGSize _winsize;
 }
 
 +(CCScene *) scene {
@@ -39,14 +43,20 @@
         self.touchEnabled = YES;
         self.accelerometerEnabled = YES;
         _shaking = NO;
+        _debugging = NO;
+        
+        _winsize = [[CCDirector sharedDirector] winSize];
         
         //build the box2d world
         [self createWorld];
         [self createGround];
-        [self createFunnel];
+        //[self createFunnel];
         
         //load spritesheet
-        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"softy.plist"];
+        [[CCTextureCache sharedTextureCache] addImage:@"ball.png"];
+        [[CCTextureCache sharedTextureCache] addImage:@"ball-50.png"];
+        [[CCTextureCache sharedTextureCache] addImage:@"crate.png"];
+        [[CCTextureCache sharedTextureCache] addImage:@"crate-50.png"];
 
         [self scheduleUpdate];
     }
@@ -122,47 +132,50 @@
 }
 
 -(void) draw {
-    //NOTE: only for debug draw, disable this in a real app
     [super draw];
-    ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position);
-    kmGLPushMatrix();
-    _world->DrawDebugData();
-    kmGLPopMatrix();
+    if (_debugging) {
+        ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position);
+        kmGLPushMatrix();
+        _world->DrawDebugData();
+        kmGLPopMatrix();
+    }
 }
 
 -(void) addBall:(CGPoint)pos {
     CCLOG(@"ADD BALL %.1f,%.1f", pos.x, pos.y);
-    SoftBall *ball = [[SoftBall alloc] initWithName:@"ball.png" pos:pos world:_world];
+    SoftBall *ball = [[SoftBall alloc] initWithName:(_debugging ? @"ball-50.png" : @"ball.png") pos:pos world:_world];
     [self addChild:ball];
 }
 
 -(void) addCrate:(CGPoint)pos {
     CCLOG(@"ADD CRATE %.1f,%.1f", pos.x, pos.y);
-    SoftBox *box = [[SoftBox alloc] initWithName:@"crate.png" pos:pos world:_world];
+    SoftBox *box = [[SoftBox alloc] initWithName:(_debugging ? @"crate-50.png" : @"crate.png") pos:pos world:_world];
     [self addChild:box];
 }
 
 -(void) update:(ccTime)dt {
-    //It is recommended that a fixed time step is used with Box2D for stability
-    //of the simulation, however, we are using a variable time step here.
-    //You need to make an informed choice, the following URL is useful
-    //http://gafferongames.com/game-physics/fix-your-timestep/
-    
-    int32 velocityIterations = 8;
-    int32 positionIterations = 2;
-    
-    // Instruct the world to perform a single step of simulation. It is
-    // generally best to keep the time step and iterations fixed.
-    _world->Step(dt, velocityIterations, positionIterations);
+    _world->Step(dt, VEL_ITER, POS_ITER);
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    //new ball for every touch
-    for ( UITouch *touch in touches ) {
+    for (UITouch *touch in touches) {
         CGPoint pos = [touch locationInView:[touch view]];
         pos = [[CCDirector sharedDirector] convertToGL:pos];
         
-        if (CCRANDOM_0_1() < 0.8) {
+        //don't allow any touches too close to the edge
+        if (pos.x < MIN_TOUCH) {
+            pos.x = MIN_TOUCH;
+        } else if (pos.x > (_winsize.width - MIN_TOUCH)) {
+            pos.x = _winsize.width - MIN_TOUCH;
+        }
+        if (pos.y < MIN_TOUCH) {
+            pos.y = MIN_TOUCH;
+        } else if (pos.y > (_winsize.height - MIN_TOUCH)) {
+            pos.y = _winsize.height - MIN_TOUCH;
+        }
+        
+        //pick ball or crate at random
+        if (CCRANDOM_0_1() < 0.8f) {
             [self addBall:pos];
         } else {
             [self addCrate:pos];
@@ -182,28 +195,35 @@
 }
 
 -(void) reset {
+    //stop everything
     [self unscheduleUpdate];
+    self.touchEnabled = NO;
+    self.accelerometerEnabled = NO;
     
-    //just destory the entire world (probably leaking...)
+    //destory the entire world (are we leaking here?)
     delete _world;
     _world = NULL;
     
-    //remove any children
-    for (CCNode *child in self.children) {
-        if ([child isKindOfClass:[SoftBall class]]) {
-            [self removeChild:child];
-        } else if ([child isKindOfClass:[SoftBox class]]) {
-            [self removeChild:child];
-        }
-    }
+    //remove all children
+    [self removeAllChildrenWithCleanup:YES];
+    
+    //toggle debugging
+    _debugging = (_debugging ? NO : YES);
+    CCLOG(@"DEBUGGING is now %@", _debugging ? @"ON" : @"OFF");
     
     //rebuild the world
     [self createWorld];
     [self createGround];
-    [self createFunnel];
+    //[self createFunnel];
     
+    //restart everything after a 500ms delay
+    [self performSelector:@selector(restart) withObject:nil afterDelay:0.5f];
+}
+
+- (void) restart {
     _shaking = NO;
-    
+    self.touchEnabled = YES;
+    self.accelerometerEnabled = YES;
     [self scheduleUpdate];
 }
 
