@@ -58,6 +58,7 @@
 }
 
 - (void) dealloc {
+    _balls = nil;
     [super dealloc];
 }
 
@@ -146,12 +147,16 @@
     [self unscheduleUpdate];
     
     CCNode *batch = [self getChildByTag:BATCH_TAG];
-    [batch removeAllChildren];
+    [batch removeAllChildrenWithCleanup:YES];
    
     [_balls removeAllObjects];
-     _shaking = NO;
     
-    [self scheduleUpdate];
+    //wait extra 500ms, then restart
+    [self performSelector:@selector(restart) withObject:nil afterDelay:0.5f];
 }
 
+- (void) restart {
+    _shaking = NO;
+    [self scheduleUpdate];
+}
 @end
