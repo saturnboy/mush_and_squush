@@ -1,7 +1,7 @@
 Mush and Squush: Soft-Body Physics
 ==================================
 
-This is my soft-body physics talk for [360|iDev](http://360idev.com/) 2013 given on Tues, Sept 10, 2013. I wrote two fun demo apps to demonstrate some aspects of soft-body physics on iOS 6.
+This is my soft-body physics talk for [360iDev](http://360idev.com/) 2013 given on Tues, Sept 10, 2013. I wrote two fun demo apps to demonstrate some aspects of soft-body physics on iOS 6.
 
 __SquishyBalls__
 
