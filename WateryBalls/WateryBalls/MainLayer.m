@@ -16,7 +16,7 @@
 
 #define W_A 50.0f
 #define W_B 60.0f
-#define W_C 110.0f
+#define W_C 110.0f * (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 1.6f : 1.0f)
 
 #define M1 (-AMAX / W_A)
 #define M2 (0.2f * AMAX / (W_C-W_B))
