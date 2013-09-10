@@ -10,10 +10,7 @@
 #import "SoftBall.h"
 #import "SoftBox.h"
 
-#define VEL_ITER 8
-#define POS_ITER 2
 #define SHAKE_ACCEL 1.9f
-#define MIN_TOUCH 30
 
 #pragma mark - MainLayer
 
@@ -28,7 +25,6 @@
 @implementation MainLayer {
     BOOL _shaking;
     BOOL _debugging;
-    CGSize _winsize;
 }
 
 +(CCScene *) scene {
@@ -45,18 +41,18 @@
         _shaking = NO;
         _debugging = NO;
         
-        _winsize = [[CCDirector sharedDirector] winSize];
-        
         //build the box2d world
         [self createWorld];
         [self createGround];
         //[self createFunnel];
         
-        //load spritesheet
+        //load textures (these *MUST* be POT textures for orig, -hd, -ipad, -ipadhd)
         [[CCTextureCache sharedTextureCache] addImage:@"ball.png"];
         [[CCTextureCache sharedTextureCache] addImage:@"ball-50.png"];
         [[CCTextureCache sharedTextureCache] addImage:@"crate.png"];
         [[CCTextureCache sharedTextureCache] addImage:@"crate-50.png"];
+        
+        [[CCTextureCache sharedTextureCache] dumpCachedTextureInfo];
 
         [self scheduleUpdate];
     }
@@ -154,25 +150,13 @@
 }
 
 -(void) update:(ccTime)dt {
-    _world->Step(dt, VEL_ITER, POS_ITER);
+    _world->Step(dt, 8, 2);
 }
 
-- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch *touch in touches) {
         CGPoint pos = [touch locationInView:[touch view]];
         pos = [[CCDirector sharedDirector] convertToGL:pos];
-        
-        //don't allow any touches too close to the edge
-        if (pos.x < MIN_TOUCH) {
-            pos.x = MIN_TOUCH;
-        } else if (pos.x > (_winsize.width - MIN_TOUCH)) {
-            pos.x = _winsize.width - MIN_TOUCH;
-        }
-        if (pos.y < MIN_TOUCH) {
-            pos.y = MIN_TOUCH;
-        } else if (pos.y > (_winsize.height - MIN_TOUCH)) {
-            pos.y = _winsize.height - MIN_TOUCH;
-        }
         
         //pick ball or crate at random
         if (CCRANDOM_0_1() < 0.8f) {

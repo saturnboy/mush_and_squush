@@ -9,7 +9,7 @@
 #import "cocos2d.h"
 #import "Box2D.h"
 
-@interface SoftBox : CCSprite
+@interface SoftBox : CCNode
 
 -(id) initWithName:(NSString *)name pos:(CGPoint)pos world:(b2World *)world;
 

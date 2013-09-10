@@ -27,22 +27,35 @@
         
         //init texture
         _tex = [[CCTextureCache sharedTextureCache] textureForKey:name];
+        float W = _tex.pixelsWide / CC_CONTENT_SCALE_FACTOR();
+        float H = _tex.pixelsHigh / CC_CONTENT_SCALE_FACTOR();
         self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTexture];
         CCLOG(@"TEXTURE %@ size=%dx%d scale=%.1f", name, _tex.pixelsWide, _tex.pixelsHigh, CC_CONTENT_SCALE_FACTOR());
         
         //compute various radii from texture width
-        _vertRadius = _tex.pixelsWide / CC_CONTENT_SCALE_FACTOR() / 8.0f;
+        _vertRadius = W / 8.0f;
         float centerRadius = _vertRadius * 0.9f;
         
         //subtract vertRadius to keep entire vert circle inside master ball
-        float R = (_tex.pixelsWide / CC_CONTENT_SCALE_FACTOR() / 2.0f - _vertRadius) / PTM_RATIO;
-        CCLOG(@"RADIUS %.3f", R);
-        CCLOG(@"VERT RADIUS %.3f", _vertRadius);
-        CCLOG(@"CENTER RADIUS %.3f", centerRadius);
+        float R = (W / 2.0f - _vertRadius) / PTM_RATIO;
+        //CCLOG(@"RADIUS %.3f", R);
+        //CCLOG(@"VERT RADIUS %.3f", _vertRadius);
+        //CCLOG(@"CENTER RADIUS %.3f", centerRadius);
 
         //compute center pos
+        CGSize sz = [[CCDirector sharedDirector] winSize];
+        if (pos.x < W * 0.5f) {
+            pos.x = W * 0.5f;
+        } else if (pos.x > (sz.width - W * 0.5f)) {
+            pos.x = sz.width - W * 0.5f;
+        }
+        if (pos.y < H * 0.5f) {
+            pos.y = H * 0.5f;
+        } else if (pos.y > (sz.height - H * 0.5f)) {
+            pos.y = sz.height - H * 0.5f;
+        }
         b2Vec2 centerPos = b2Vec2(pos.x/PTM_RATIO, pos.y/PTM_RATIO);
-        CCLOG(@"CENTER (%.3f,%.3f)", centerPos.x, centerPos.y);
+        //CCLOG(@"CENTER (%.3f,%.3f)", centerPos.x, centerPos.y);
         
         //first, the center body
         b2CircleShape shape;
@@ -51,7 +64,7 @@
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
         bodyDef.position = centerPos;
-        bodyDef.angularDamping = 1.0f;
+        bodyDef.angularDamping = 5.0f;
         
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &shape;
@@ -67,7 +80,7 @@
         for (int i = 0; i < 8; i++) {
             float theta = i * M_PI_4;
             b2Vec2 vertPos = b2Vec2(R * cosf(theta), R * sinf(theta)) + centerPos;
-            CCLOG(@"VERT%d theta=%.3f (%.3f,%.3f)", i, theta, vertPos.x, vertPos.y);
+            //CCLOG(@"VERT%d theta=%.3f (%.3f,%.3f)", i, theta, vertPos.x, vertPos.y);
             
             //only the vertex pos changes
             bodyDef.position = vertPos;
@@ -151,12 +164,11 @@
 
     CC_NODE_DRAW_SETUP();
     
+    ccGLBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
     ccGLBindTexture2D(_tex.name);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
-    ccGLBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
     
     ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position | kCCVertexAttribFlag_TexCoords);
     
