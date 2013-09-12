@@ -9,6 +9,7 @@ __SquishyBalls__
 
 * 2d circles and squares that are soft (like a nerf ball) -- uses box2d, cocos2d 2.1, and some custom OpenGL ES 2.0 drawing
 
+* Check out the ![Squishy Balls Video](http://vimeo.com/saturnboy/mush-and-squush)!
 
 __WateryBalls__
 
