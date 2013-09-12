@@ -5,11 +5,11 @@ This is my soft-body physics talk for [360iDev](http://360idev.com/) 2013 given 
 
 __SquishyBalls__
 
+* Check out the video: http://vimeo.com/saturnboy/mush-and-squush
+
 ![Squishy Balls Screenshot](/screenshots/squishy_balls_screenshot.png?raw=true)
 
 * 2d circles and squares that are soft (like a nerf ball) -- uses box2d, cocos2d 2.1, and some custom OpenGL ES 2.0 drawing
-
-* Check out the ![Squishy Balls Video](http://vimeo.com/saturnboy/mush-and-squush)!
 
 __WateryBalls__
 
